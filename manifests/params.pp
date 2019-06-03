@@ -1,25 +1,28 @@
+# @summary Sets defaults based on OS
 #
+# @api private
 class nrpe::params {
 
-  $nrpe_provider = $::osfamily ? {
+  $nrpe_provider = fact('os.family') ? {
     'Solaris' => pkgutil,
     default   => undef,
   }
 
-  $nrpe_files_group = $::osfamily ? {
+  $nrpe_files_group = fact('os.family') ? {
     /(Free|Open)BSD/ => 'wheel',
-    default   => 'root',
+    default          => 'root',
   }
 
   $nrpe_plugin_file_mode = '0755'
 
-  case $::osfamily {
+  case fact('os.family') {
     'Debian':  {
       $libdir           = '/usr/lib/nagios/plugins'
       $nrpe_user        = 'nagios'
       $nrpe_group       = 'nagios'
       $nrpe_pid_file    = '/var/run/nagios/nrpe.pid'
       $nrpe_config      = '/etc/nagios/nrpe.cfg'
+      $nrpe_ssl_dir     = '/etc/nagios/nrpe-ssl'
       $nrpe_include_dir = '/etc/nagios/nrpe.d'
       $nrpe_service     = 'nagios-nrpe-server'
       $nrpe_packages    = [
@@ -35,6 +38,7 @@ class nrpe::params {
       $nrpe_group       = 'nagios'
       $nrpe_pid_file    = '/var/run/nrpe.pid'
       $nrpe_config      = '/etc/opt/csw/nrpe.cfg'
+      $nrpe_ssl_dir     = '/etc/opt/csw/nrpe-ssl'
       $nrpe_include_dir = '/etc/opt/csw/nrpe.d'
       $nrpe_service     = 'cswnrpe'
       $nrpe_packages    = [
@@ -44,7 +48,7 @@ class nrpe::params {
       $sudo_command  = '/usr/bin/sudo'
     }
     'RedHat':  {
-      $libdir           = $::architecture ? {
+      $libdir           = fact('os.architecture') ? {
         /x86_64/ => '/usr/lib64/nagios/plugins',
         default  => '/usr/lib/nagios/plugins',
       }
@@ -52,6 +56,7 @@ class nrpe::params {
       $nrpe_group       = 'nrpe'
       $nrpe_pid_file    = '/var/run/nrpe/nrpe.pid'
       $nrpe_config      = '/etc/nagios/nrpe.cfg'
+      $nrpe_ssl_dir     = '/etc/nagios/nrpe-ssl'
       $nrpe_include_dir = '/etc/nrpe.d'
       $nrpe_service     = 'nrpe'
       $nrpe_packages    = [
@@ -66,6 +71,7 @@ class nrpe::params {
       $nrpe_group       = 'nagios'
       $nrpe_pid_file    = '/var/run/nrpe2/nrpe2.pid'
       $nrpe_config      = '/usr/local/etc/nrpe.cfg'
+      $nrpe_ssl_dir     = '/usr/local/etc/nrpe-ssl'
       $nrpe_include_dir = '/usr/local/etc/nrpe.d'
       $nrpe_service     = 'nrpe2'
       $nrpe_packages    = [
@@ -80,6 +86,7 @@ class nrpe::params {
       $nrpe_group       = '_nrpe'
       $nrpe_pid_file    = '/var/run/nrpe/nrpe.pid'
       $nrpe_config      = '/etc/nrpe.cfg'
+      $nrpe_ssl_dir     = '/etc/nrpe-ssl'
       $nrpe_include_dir = '/etc/nrpe.d'
       $nrpe_service     = 'nrpe'
       $nrpe_packages    = [
@@ -94,9 +101,10 @@ class nrpe::params {
       $nrpe_group       = 'nagios'
       $nrpe_pid_file    = '/var/run/nrpe/nrpe.pid'
       $nrpe_service     = 'nrpe'
-      case $::operatingsystem {
+      case fact('os.name') {
         'SLES': {
           $nrpe_config      = '/etc/nagios/nrpe.cfg'
+          $nrpe_ssl_dir     = '/etc/nagios/nrpe-ssl'
           $nrpe_include_dir = '/etc/nagios/nrpe.d'
           $nrpe_packages    = [
             'nagios-nrpe',
@@ -107,6 +115,7 @@ class nrpe::params {
         }
         default:   {
           $nrpe_config      = '/etc/nrpe.cfg'
+          $nrpe_ssl_dir     = '/etc/nrpe-ssl'
           $nrpe_include_dir = '/etc/nrpe.d'
           $nrpe_packages    = [
             'nrpe',
@@ -117,7 +126,7 @@ class nrpe::params {
       }
     }
     'Gentoo':  {
-      $libdir           = $::architecture ? {
+      $libdir           = fact('os.architecture') ? {
         /x86_64/ => '/usr/lib64/nagios/plugins',
         default  => '/usr/lib/nagios/plugins',
       }
@@ -125,6 +134,7 @@ class nrpe::params {
       $nrpe_group       = 'nagios'
       $nrpe_pid_file    = '/var/run/nrpe.pid'
       $nrpe_config      = '/etc/nagios/nrpe.cfg'
+      $nrpe_ssl_dir     = '/etc/nagios/nrpe-ssl'
       $nrpe_include_dir = '/etc/nagios/nrpe.d'
       $nrpe_service     = 'nrpe'
       $nrpe_packages    = [
@@ -137,11 +147,22 @@ class nrpe::params {
     }
   }
 
-  $dont_blame_nrpe                 = 0
+  $dont_blame_nrpe                 = false
   $allow_bash_command_substitution = undef # not in very old NRPE
   $log_facility                    = 'daemon'
   $server_port                     = 5666
   $command_prefix                  = undef
-  $debug                           = 0
+  $debug                           = false
   $connection_timeout              = 300
+
+  $ssl_version                 = 'TLSv1.2+'
+  $ssl_ciphers                 = [
+    'DHE-RSA-AES128-GCM-SHA256',
+    'DHE-RSA-AES256-GCM-SHA384',
+    'DHE-RSA-AES128-SHA',
+    'DHE-RSA-AES256-SHA',
+    'DHE-RSA-AES128-SHA256',
+    'DHE-RSA-AES256-SHA256',
+  ]
+  $ssl_client_certs            = 'ask'
 }

@@ -1,23 +1,42 @@
-require 'puppetlabs_spec_helper/module_spec_helper'
-
+# This file is managed via modulesync
+# https://github.com/voxpupuli/modulesync
+# https://github.com/voxpupuli/modulesync_config
 RSpec.configure do |c|
-  c.include PuppetlabsSpec::Files
+  c.mock_with :rspec
+end
 
-  c.before :each do
-    # Ensure that we don't accidentally cache facts and environment
-    # between test cases.
-    Facter::Util::Loader.any_instance.stubs(:load_all)
-    Facter.clear
-    Facter.clear_messages
+require 'puppetlabs_spec_helper/module_spec_helper'
+require 'rspec-puppet-facts'
+include RspecPuppetFacts
 
-    # Store any environment variables away to be restored later
-    @old_env = {}
-    ENV.each_key {|k| @old_env[k] = ENV[k]}
-    if ENV['STRICT_VARIABLES'] == 'yes'
-      Puppet.settings[:strict_variables]=true
+if File.exist?(File.join(__dir__, 'default_module_facts.yml'))
+  facts = YAML.load(File.read(File.join(__dir__, 'default_module_facts.yml')))
+  if facts
+    facts.each do |name, value|
+      add_custom_fact name.to_sym, value
     end
   end
-  c.after :each do
-    PuppetlabsSpec::Files.cleanup
+end
+
+if Dir.exist?(File.expand_path('../../lib', __FILE__))
+  require 'coveralls'
+  require 'simplecov'
+  require 'simplecov-console'
+  SimpleCov.formatters = [
+    SimpleCov::Formatter::HTMLFormatter,
+    SimpleCov::Formatter::Console
+  ]
+  SimpleCov.start do
+    track_files 'lib/**/*.rb'
+    add_filter '/spec'
+    add_filter '/vendor'
+    add_filter '/.vendor'
+  end
+end
+
+RSpec.configure do |c|
+  # Coverage generation
+  c.after(:suite) do
+    RSpec::Puppet::Coverage.report!
   end
 end
