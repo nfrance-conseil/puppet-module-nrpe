@@ -73,7 +73,7 @@ class nrpe::params {
       $libdir           = '/usr/local/libexec/nagios'
       $nrpe_user        = 'nagios'
       $nrpe_group       = 'nagios'
-      $nrpe_pid_file    = '/var/run/nrpe3/nrpe3.pid'
+      $nrpe_pid_file    = '/var/run/nrpe/nrpe.pid'
       $nrpe_config      = '/usr/local/etc/nrpe.cfg'
       $nrpe_ssl_dir     = '/usr/local/etc/nrpe-ssl'
       $nrpe_include_dir = '/usr/local/etc/nrpe.d'
