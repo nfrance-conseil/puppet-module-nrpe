@@ -18,6 +18,8 @@
 #   Whether the command should use sudo.
 # @param sudo_user
 #   The user to run the command as when using sudo.
+# @param sudo_command
+#   Path to the sudo command.
 define nrpe::command (
   String[1]                  $command,
   Enum['present', 'absent']  $ensure       = present,
