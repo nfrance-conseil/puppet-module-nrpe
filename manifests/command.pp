@@ -26,7 +26,7 @@ define nrpe::command (
   Optional[Stdlib::Filemode] $file_mode    = undef,
   Boolean                    $sudo         = false,
   String[1]                  $sudo_user    = 'root',
-  String[1]                  $sudo_command = $nrpe::params::sudo_command,
+  Stdlib::Absolutepath       $sudo_command = $nrpe::params::sudo_command,
 ) {
   include nrpe
 
@@ -39,6 +39,7 @@ define nrpe::command (
         'command'      => $command,
         'sudo'         => $sudo,
         'sudo_user'    => $sudo_user,
+        'sudo_command' => $sudo_command,
         'libdir'       => $nrpe::params::libdir,
       },
     ),
