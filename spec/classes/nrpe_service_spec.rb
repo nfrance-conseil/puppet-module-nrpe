@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'nrpe::service' do
@@ -10,9 +12,11 @@ describe 'nrpe::service' do
       context 'by default' do
         let(:pre_condition) { 'include nrpe' }
 
-        service_name = case facts[:osfamily]
+        service_name = case facts[:os]['family']
                        when 'Debian'
                          'nagios-nrpe-server'
+                       when 'FreeBSD'
+                         'nrpe3'
                        else
                          'nrpe'
                        end

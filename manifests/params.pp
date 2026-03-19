@@ -26,10 +26,11 @@ class nrpe::params {
       $nrpe_service     = 'nagios-nrpe-server'
       $nrpe_packages    = [
         'nagios-nrpe-server',
-        'nagios-plugins',
+        'monitoring-plugins',
       ]
-      $sudo_command  = '/usr/bin/sudo'
-
+      $sudo_command     = '/usr/bin/sudo'
+      $user_home_dir    = '/var/lib/nagios'
+      $user_shell       = '/bin/false'
     }
     'Solaris': {
       $libdir           = '/opt/csw/libexec/nagios-plugins'
@@ -44,7 +45,9 @@ class nrpe::params {
         'nrpe',
         'nagios_plugins',
       ]
-      $sudo_command  = '/usr/bin/sudo'
+      $sudo_command     = '/usr/bin/sudo'
+      $user_home_dir    = '/var/lib/nagios'
+      $user_shell       = '/bin/false'
     }
     'RedHat':  {
       $libdir           = fact('os.architecture') ? {
@@ -62,22 +65,26 @@ class nrpe::params {
         'nrpe',
         'nagios-plugins-all',
       ]
-      $sudo_command  = '/usr/bin/sudo'
+      $sudo_command     = '/usr/bin/sudo'
+      $user_home_dir    = '/var/run/nrpe'
+      $user_shell       = '/sbin/nologin'
     }
     'FreeBSD': {
       $libdir           = '/usr/local/libexec/nagios'
       $nrpe_user        = 'nagios'
       $nrpe_group       = 'nagios'
-      $nrpe_pid_file    = '/var/run/nrpe2/nrpe2.pid'
+      $nrpe_pid_file    = '/var/run/nrpe3/nrpe3.pid'
       $nrpe_config      = '/usr/local/etc/nrpe.cfg'
       $nrpe_ssl_dir     = '/usr/local/etc/nrpe-ssl'
       $nrpe_include_dir = '/usr/local/etc/nrpe.d'
-      $nrpe_service     = 'nrpe2'
+      $nrpe_service     = 'nrpe3'
       $nrpe_packages    = [
-        'net-mgmt/nrpe',
-        'net-mgmt/nagios-plugins',
+        'nrpe3',
+        'nagios-plugins',
       ]
-      $sudo_command  = '/usr/local/bin/sudo'
+      $sudo_command     = '/usr/local/bin/sudo'
+      $user_home_dir    = '/var/spool/nagios'
+      $user_shell       = '/sbin/nologin'
     }
     'OpenBSD': {
       $libdir           = '/usr/local/libexec/nagios'
@@ -92,7 +99,9 @@ class nrpe::params {
         'nrpe',
         'monitoring-plugins',
       ]
-      $sudo_command  = '/usr/bin/sudo'
+      $sudo_command     = '/usr/bin/sudo'
+      $user_home_dir    = '/var/lib/nagios'
+      $user_shell       = '/bin/false'
     }
     'Suse':  {
       $libdir           = '/usr/lib/nagios/plugins'
@@ -110,7 +119,6 @@ class nrpe::params {
             'nagios-plugins',
             'nagios-plugins-nrpe',
           ]
-          $sudo_command  = '/usr/bin/sudo'
         }
         default:   {
           $nrpe_config      = '/etc/nrpe.cfg'
@@ -120,9 +128,11 @@ class nrpe::params {
             'nrpe',
             'nagios-plugins-all',
           ]
-          $sudo_command  = '/usr/bin/sudo'
         }
       }
+      $sudo_command     = '/usr/bin/sudo'
+      $user_home_dir    = '/var/lib/nagios'
+      $user_shell       = '/bin/false'
     }
     'Gentoo':  {
       $libdir           = fact('os.architecture') ? {
@@ -140,7 +150,9 @@ class nrpe::params {
         'net-analyzer/nrpe',
         'net-analyzer/nagios-plugins',
       ]
-      $sudo_command  = '/usr/bin/sudo'
+      $sudo_command     = '/usr/bin/sudo'
+      $user_home_dir    = '/dev/null'
+      $user_shell       = '/sbin/nologin'
     }
     default:   {
     }
@@ -154,6 +166,7 @@ class nrpe::params {
   $debug                           = false
   $connection_timeout              = 300
   $allow_weak_random_seed          = true
+  $listen_queue_size               = 16
 
   $ssl_version                 = 'TLSv1.2+'
   $ssl_ciphers                 = [

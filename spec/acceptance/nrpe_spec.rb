@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper_acceptance'
 
 describe 'nrpe class' do
@@ -5,6 +7,9 @@ describe 'nrpe class' do
   when 'Debian'
     package_name = 'nagios-nrpe-server'
     service_name = 'nagios-nrpe-server'
+  when 'FreeBSD'
+    package_name = 'nrpe3'
+    service_name = 'nrpe3'
   else
     service_name = 'nrpe'
     package_name = 'nrpe'

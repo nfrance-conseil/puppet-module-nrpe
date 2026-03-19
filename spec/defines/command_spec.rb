@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'nrpe::command' do
-  on_supported_os(facterversion: '3.6').each do |os, facts|
+  on_supported_os.each do |os, facts|
     context "on #{os}" do
       let :facts do
         facts
@@ -16,7 +18,8 @@ describe 'nrpe::command' do
       end
 
       it { is_expected.to compile.with_all_deps }
-      case facts[:osfamily]
+
+      case facts[:os]['family']
       when 'Debian'
         it {
           is_expected.to contain_file('/etc/nagios/nrpe.d/check_users.cfg').with(
@@ -28,6 +31,12 @@ describe 'nrpe::command' do
           is_expected.to contain_file('/etc/nagios/nrpe.d/check_users.cfg').with(
             'mode' => '0644'
           ).that_requires(['Package[net-analyzer/nrpe]'])
+        }
+      when 'FreeBSD'
+        it {
+          is_expected.to contain_file('/usr/local/etc/nrpe.d/check_users.cfg').with(
+            'mode' => '0644'
+          ).that_requires(['Package[nrpe3]'])
         }
       else
         it {

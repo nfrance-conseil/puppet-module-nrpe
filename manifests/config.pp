@@ -2,10 +2,34 @@
 #
 # @api private
 class nrpe::config {
-  unless $nrpe::supplementary_groups.empty {
+  if $nrpe::manage_group {
+    group { $nrpe::nrpe_group:
+      ensure => 'present',
+      system => true,
+    }
+    $group_req = Group[$nrpe::nrpe_group]
+  } else {
+    $group_req = undef
+  }
+
+  if $nrpe::manage_user {
     user { $nrpe::nrpe_user:
-      gid    => $nrpe::nrpe_group,
-      groups => $nrpe::supplementary_groups,
+      ensure  => 'present',
+      before  => Service[$nrpe::service_name],
+      comment => $nrpe::user_comment,
+      gid     => $nrpe::nrpe_group,
+      groups  => $nrpe::supplementary_groups,
+      home    => $nrpe::user_home_dir,
+      require => $group_req,
+      shell   => $nrpe::user_shell,
+      system  => true,
+    }
+  } else {
+    unless $nrpe::supplementary_groups.empty {
+      user { $nrpe::nrpe_user:
+        gid    => $nrpe::nrpe_group,
+        groups => $nrpe::supplementary_groups,
+      }
     }
   }
 
@@ -38,6 +62,7 @@ class nrpe::config {
         'command_timeout'                 => $nrpe::command_timeout,
         'connection_timeout'              => $nrpe::connection_timeout,
         'allow_weak_random_seed'          => bool2str($nrpe::allow_weak_random_seed, '1', '0'),
+        'listen_queue_size'               => $nrpe::listen_queue_size,
       }
     ),
     order   => '01',

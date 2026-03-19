@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'nrpe::plugin' do
-  on_supported_os(facterversion: '3.6').each do |os, facts|
+  on_supported_os.each do |os, facts|
     context "on #{os}" do
       let :facts do
         facts
@@ -16,11 +18,14 @@ describe 'nrpe::plugin' do
       end
 
       it { is_expected.to compile.with_all_deps }
-      case facts[:osfamily]
+
+      case facts[:os]['family']
       when 'Debian'
         it { is_expected.to contain_file('/usr/lib/nagios/plugins/check_users').that_requires('Package[nagios-nrpe-server]') }
       when 'Gentoo'
         it { is_expected.to contain_file('/usr/lib/nagios/plugins/check_users').that_requires('Package[net-analyzer/nrpe]') }
+      when 'FreeBSD'
+        it { is_expected.to contain_file('/usr/local/libexec/nagios/check_users').that_requires('Package[nrpe3]') }
       else
         it { is_expected.to contain_file('/usr/lib64/nagios/plugins/check_users').that_requires('Package[nrpe]') }
       end

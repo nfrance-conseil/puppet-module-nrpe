@@ -1,7 +1,7 @@
 # NRPE Module for Puppet
 
 [![License](https://img.shields.io/github/license/voxpupuli/puppet-nrpe.svg)](https://github.com/voxpupuli/puppet-nrpe/blob/master/LICENSE)
-[![Build Status](https://travis-ci.org/voxpupuli/puppet-nrpe.png?branch=master)](https://travis-ci.org/voxpupuli/puppet-nrpe)
+![Build Status](https://github.com/voxpupuli/puppet-nrpe/actions/workflows/ci.yml/badge.svg?branch=master)
 [![Puppet Forge](https://img.shields.io/puppetforge/v/puppet/nrpe.svg)](https://forge.puppetlabs.com/puppet/nrpe)
 [![Puppet Forge - downloads](https://img.shields.io/puppetforge/dt/puppet/nrpe.svg)](https://forge.puppetlabs.com/puppet/nrpe)
 [![Puppet Forge - scores](https://img.shields.io/puppetforge/f/puppet/nrpe.svg)](https://forge.puppetlabs.com/puppet/nrpe)
@@ -18,7 +18,7 @@
 ## Module Description
 
 NRPE (Nagios Remote Plugin Executor) allows you to remotely execute Nagios plugins on other Linux/Unix machines. This allows you to monitor remote machine metrics (disk usage, CPU load, etc.).
-This puppet module manages the instllation and configuration of NRPE.  It can install NRPE plugins and setup NRPE commands.  Secure communication to NRPE using SSL is also supported.
+This puppet module manages the installation and configuration of NRPE.  It can install NRPE plugins and setup NRPE commands.  Secure communication to NRPE using SSL is also supported.
 
 ## Setup
 
@@ -103,6 +103,10 @@ This module has been documented with [puppet-strings](https://github.com/puppetl
 
  * This module requires the EPEL repositories to be enabled
  * This module currently does not manage the firewall rules
+
+### Oracle Linux
+
+* This module requires the EPEL and Optional Updates repositories to be enabled
 
 ### Solaris
 
