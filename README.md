@@ -124,5 +124,3 @@ To regenerate the [REFERENCE.MD](REFERENCE.md) file, please run the rake task as
 This module is a fork of [pdxcat/nrpe](https://forge.puppet.com/pdxcat/nrpe)
 
 It is licensed under the Apache License, Version 2.0.
-
-This is a test
